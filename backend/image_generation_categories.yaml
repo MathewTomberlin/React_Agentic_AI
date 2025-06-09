@@ -1,0 +1,32 @@
+categories:
+  default:
+    keywords: []
+    parameters:
+      width: 1024
+      height: 1024
+      cfgScale: 7
+      steps: 30
+      sampler: euler_a
+      scheduler: simple
+      refinerUpscale: 1
+      model: OfficialStableDiffusion/sd_xl_base_1.0
+  anime:
+    keywords: [anime, cartoon, drawn, illustration]
+    parameters:
+      width: 1024
+      height: 1024
+      cfgScale: 3
+      steps: 30
+      sampler: euler
+      scheduler: simple
+      model: hyphoriaIllustrious20_v001
+  realistic:
+    keywords: [realism, realistic, photoreal, photorealism, real, "real life"]
+    parameters:
+      width: 1024
+      height: 1024
+      cfgScale: 3
+      steps: 50
+      sampler: dpmpp_3m_sde_gpu
+      scheduler: simple
+      model: CyberIllustrious_-_CyberRealistic_-_v3-8

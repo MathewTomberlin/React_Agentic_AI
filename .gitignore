@@ -1,0 +1,31 @@
+# General OS/Editor
+*.swp
+*.swo
+*.swn
+*.bak
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+ehthumbs.db
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+
+# Model and data files (customize as needed)
+*.gguf
+*.bin
+*.ckpt
+*.pt
+*.onnx
+*.h5
+*.tflite
+*.npz
+*.npy
+
+# Jupyter
+*.ipynb_checkpoints
+
+# VSCode settings
+.vscode/

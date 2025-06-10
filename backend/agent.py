@@ -77,11 +77,12 @@ class DanbooruTagTransformer:
             #self.log(self.model)
             print("-- Loaded DanbooruTagTransformer!")
         except Exception as e:
-            print(f"X -- ERROR Loading DanbooruTagTransformer:\n {e}", "ERROR")
+            print(f"-- ERROR Loading DanbooruTagTransformer:\n {e}")
             # Write error to a file for debugging
             with open("danbooru_lora_load_error.log", "w") as f:
                 f.write(str(e))
             self.model = None
+            raise Exception("Failed to load LoRA")
 
     def create_bidirectional_prompt(self, input_text: str, output_text: str = None) -> str:
         """Create prompts that handle both directions"""
@@ -136,7 +137,7 @@ class DanbooruTagTransformer:
             device = next(self.model.parameters()).device
             inputs = self.tokenizer.encode(prompt, return_tensors="pt").to(device)
             
-            print(f"DanbooruTagTransformer Inputs: {settings}")
+            print(f"LoRa Inference Parameters: {settings}")
             with torch.no_grad():
                 outputs = self.model.generate(
                     inputs,
@@ -155,7 +156,7 @@ class DanbooruTagTransformer:
             if "<|im_start|>assistant\n" in full_response:
                 tags = full_response.split("<|im_start|>assistant\n")[-1].strip()
                 tags = re.sub(r'<\|.*?\|>', '', tags).strip()
-                print(f"Transformed tags: {tags}", "INFO")
+                print(f"Transformed tags: {tags}")
                 return tags
             
             print("full_response:", full_response)
@@ -326,7 +327,11 @@ class Agent:
     def load_danbooru_tag_lora(self):
         if self.danbooru_transformer is None:
             self.log("Loading DanbooruTagTransformer", "INFO")
-            self.danbooru_transformer = DanbooruTagTransformer()
+            try:
+                self.danbooru_transformer = DanbooruTagTransformer()
+            except Exception as e:
+                self.log("Failed to load DanbooruTagTransformer", "INFO")
+                self.danbooru_transformer = None
 
     def get_llm(self,backend: str, model: str):
         if backend == "Ollama":
@@ -619,21 +624,29 @@ class Agent:
         await websocket.send_json({"type": "status", "message": f"Generated prompt '{wordlist}'"})
         taglist = wordlist
         # Apply Danbooru transformation if enabled
-        if self.danbooru_transformer:
-            self.log(f"Applying Danbooru tag transformation...")
+        if settings["use_danbooru_transform"]:
+            #Output error message about failed LoRA and return prompts
+            if not self.danbooru_transformer:
+                await websocket.send_json({"type": "error", "message": f"Failed to apply LoRA 'DanbooruTagTransformer'"})
+                await websocket.send_json({"type": "prompt_update", "data": {
+                    "base_prompt": user_input,
+                    "enhanced_prompt": wordlist
+                }})
+            else:
+                self.log(f"Applying Danbooru tag transformation...")
 
-            taglist = self.danbooru_transformer.transform_tags(wordlist,settings["lora_settings"])
-            await websocket.send_json({"type": "status", "message": f"Generated Danbooru prompt '{taglist}'"})
-            await websocket.send_json({"type": "prompt_update", "data": {
-                "base_prompt": user_input,
-                "enhanced_prompt": wordlist,
-                "danbooru_prompt": taglist
-            }})
+                taglist = self.danbooru_transformer.transform_tags(wordlist,settings["lora_settings"])
+                await websocket.send_json({"type": "status", "message": f"Generated Danbooru prompt '{taglist}'"})
+                await websocket.send_json({"type": "prompt_update", "data": {
+                    "base_prompt": user_input,
+                    "enhanced_prompt": wordlist,
+                    "danbooru_prompt": taglist
+                }})
         else:
             await websocket.send_json({"type": "prompt_update", "data": {
-            "base_prompt": user_input,
-            "enhanced_prompt": wordlist
-        }})
+                "base_prompt": user_input,
+                "enhanced_prompt": wordlist
+            }})
 
         return {
             **state,

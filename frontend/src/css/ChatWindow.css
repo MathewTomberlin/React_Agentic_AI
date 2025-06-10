@@ -27,6 +27,12 @@
   align-self: flex-end;
 }
 
+.message.error {
+  background: #ffd8d8;
+  border-color: #ff2121;
+  align-self: flex-end;
+}
+
 .message.ai, .message.agent {
   background: #f8ffd3;
   border-color: #c7e6b5;

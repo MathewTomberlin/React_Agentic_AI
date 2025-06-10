@@ -11,3 +11,4 @@ pydantic
 typing-extensions
 peft
 llama-cpp-python
+websockets

@@ -28,6 +28,7 @@ venv/
 .env.*
 .DS_Store
 
+node_modules/
 models/
 vision_models/
 danbooru_tag_base/

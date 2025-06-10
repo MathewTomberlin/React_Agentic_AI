@@ -233,7 +233,7 @@ parameter_extraction_examples = (
     "assistant\nprompt 'a girl dancing under a streetlight'\n"
     "user\ncreate an image of a man swinging a hammer and hitting a wall\n"
     "assistant\nprompt 'a man swinging a hammer and hitting a wall'\n"
-    "user\generate image, prompt 'a running man on a dirt path through the desert', negative 'bad anatomy, bad lighting, shoes', 10 steps, cfgScale 3, refinerUpscale 2, refinerControlPercentage 0.35\n"
+    "user\ngenerate image, prompt 'a running man on a dirt path through the desert', negative 'bad anatomy, bad lighting, shoes', 10 steps, cfgScale 3, refinerUpscale 2, refinerControlPercentage 0.35\n"
     "assistant\nprompt 'a running man on a dirt path through the desert', negative 'bad anatomy, bad lighting, shoes', steps 10, cfgScale 3, refinerUpscale 2, refinerControlPercentage 0.35\n"
 )
 prompt_extraction_examples = (
